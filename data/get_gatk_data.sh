@@ -9,3 +9,7 @@ mkdir -p gatk-best-practices/somatic-hg38/
 cd gatk-best-practices/somatic-hg38/
 gsutil cp -n 'gs://gatk-best-practices/somatic-hg38/*' .
 
+cd -
+mkdir -p gatk-reference-genome
+cd gatk-reference-genome
+gsutil cp -n 'gs://genomics-public-data/resources/broad/hg38/v0/*' .
