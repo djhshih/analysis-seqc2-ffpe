@@ -5,3 +5,5 @@
 **/cromwell-*
 **/log
 **/sbatch_log
+**/*.bam
+**/*.bai
