@@ -1,0 +1,7 @@
+**/gatk-reference-genome
+**/seqc2-reference-genome
+**/gatk-best-practices
+**/gatk-test-data
+**/cromwell-*
+**/log
+**/sbatch_log
