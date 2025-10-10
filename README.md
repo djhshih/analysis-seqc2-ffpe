@@ -1,8 +1,52 @@
 # Analysis SEQC2 FFPE
 
-Here we use the datasets with matched FFPE and Fresh Frozen (FF) samples from the SEQC2 study to benchmark the performance of FFPE artifact filtering tools against our in house orientation-bias based statistical model - MOBSNVF.
+Here, matched FFPE and Fresh Frozen (FF) samples from the Sequencing Quality Control 2 (SEQC2) datasets are used to benchmark the performance of various FFPE artifact filtering tools against our in-house orientation-bias based statistical model - MOBSNVF.
+
+## Dependencies
+
+- python
+- R
+- SOBDetector (included)
+- htspan ([djhshih/htspan](https://github.com/djhshih/htspan))
+- samtools
+- bcftools
+- cromwell
+- GATK
+- gsutil
+- rgsam ([djhshih/rgsam](https://github.com/djhshih/rgsam))
+- dlazy ([djhshih/dlazy](https://github.com/djhshih/dlazy/tree/main))
+- openjdk
+
+### R packages
+- tidyverse
+- io
+- precrec
+- jsonlite
+- argparser
+- glue
+- patchwork
+- grid
+- hrbrthemes
+- viridis
+- MicroSEC ([MANO-B/MicroSEC](https://github.com/MANO-B/MicroSEC))
+- Rsamtools
+- BiocGenerics
+- Biostrings
+- doParallel
+
+### Python Libraries
+- polars
+- pysam
+- pandas
+- numpy
+- matplotlib
+- seaborn
+
+
 
 ## Study
+
+The datasets used in our analysis are from the following publication:
 
 [Whole genome and exome sequencing reference datasets from a multi-center and cross-platform benchmark study](https://www.nature.com/articles/s41597-021-01077-5)
 
@@ -12,7 +56,7 @@ WGS and WES data were generated using various NGS library preparation protocols,
 
 DNA was extracted from fresh cells or cell pellets mimicking the formalin-fixed paraffin-embedded (FFPE) process with fixation time of 1, 2, 6, or 24 hours. A small amount of DNA from fresh cells of HCC1395 and HCC1395BL was pooled at various ratios (3:1, 1:1, 1:4, 1:9 and 1:19) to create mixtures. Both fresh DNA and FFPE DNA were profiled on NGS or microarray platforms following manufacturer recommended protocols. To assess the reproducibility of WGS and WES, six sequencing centers performed a total of 12 replicates (3 × 3 + 3) on each platform. In addition, 12 WGS libraries constructed using three different library preparation protocols (TruSeq PCR-free, TruSeq-Nano, and Nextera Flex) in four different quantities of DNA inputs (1, 10, 100, and 250 ng) were sequenced on an Illumina HiSeq 4000, and nine WGS libraries constructed using the TruSeq PCR-free protocol were sequenced on an Illumina NovaSeq. Finally, Affymetrix Cytoscan HD and single-cell sequencing with 10X Genomics platform were performed to uncover the cytogenetics and heterogeneity of two cell lines.
 
-![Zhao et. al. 2021](image.png)
+![Datasets: Zhao et. al. 2021](.md_images/image.png)
 
 ## Datasets
 
@@ -50,3 +94,68 @@ https://www.atcc.org/products/crl-2324
 
 HCC1395BL
 https://www.atcc.org/products/crl-2325
+
+
+## Replication
+
+1. Clone this repository
+   ```bash
+   git clone --recurse-submodules https://github.com/djhshih/analysis-seqc2-ffpe.git
+   ```
+
+2. Install all the dependencies listed above
+
+3. Navigate to the `annot` directory and run `annot.py`
+    ```bash
+    python annot.py
+    ```
+    This will generate annotation files describing all the samples which will be used later during preprocessing and analysis.
+
+4. Navigate to the `data` directory and run the following commands:
+    ```bash
+    bash get_seqc2_common.sh
+    bash get_gatk_data.sh
+    ```
+
+5. Navigate to the `data/bam` directory and run `get.sh`
+    ```bash
+    bash get.sh
+    ```
+    This will download all the SEQC2 BAM files to be used in the analysis.
+
+6. Navigate to the `vcf/seqc2_repo/` directory and run `get.sh`
+    ```bash
+    bash get.sh
+    ```
+    This will download all the SEQC2 VCF files which were present in the repository.
+    **Note:** VCF for only a handful of samples were present SEQC2 FTP repository.
+    This is why we will be variant calling to generate our own VCF files from their respective BAMs later on.
+
+7. Navigate to the `vcf/bam_variant_mutect2` directory and run:
+    ```bash
+    python prepare.py
+    bash call_variants_mutect2.sh
+    python link.py
+    ```
+    This will perform variant calling using GATK Mutect2 on all the BAM files downloaded in step 5.
+    Resulting VCF files will be stored in `vcf/mutect2` directory.
+
+8. Navigate to the `ffpe_snvf/ffpe_artifact_filtering` directory and run:
+    ```bash
+    python create_scripts.py
+    bash ffpe-snvf.sh
+    python make-microsec-imputs.py
+    bash ffpe-snvf_microsec.sh
+    ```
+    This will run MOBSNVF, VAFSNVF, SOBDetector and MicroSEC on all the VCF files generated in step 7.
+    Resulting filtered VCF files will be stored in `vcf/mobsnvf` directory.
+
+
+
+## To Do 
+
+Rename directories:
+data/ref -> data/gatk-reference-genome
+data/reference_genome -> data/seqc2-reference-genome
+
+update these changes in the variant calling scripts when that finishes: vcf/bam_variant_mutect2/prepare.py
