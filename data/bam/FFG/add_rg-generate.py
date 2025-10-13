@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import glob
-import polars as pl
+# import polars as pl
 
 ## Additional info can be obtained through the annotations. However, this is not necessary
 
@@ -15,7 +15,6 @@ import polars as pl
 # ffg_meta
 
 bam_paths = glob.glob("*.bam")
-bam_paths
 
 script_header="""#!/usr/bin/env bash
 
@@ -40,7 +39,7 @@ for path in bam_paths:
     
     rg_replace_line = f"samtools addreplacerg -@ 4 -r $'{rg}' -o rg_fix_temp/{file_name} {path}"
     index_line = f"samtools index -@ 4 -b -o rg_fix_temp/{file_name.replace(".bam", ".bai")} rg_fix_temp/{file_name}"
-    move_old = f"mv {path} no_rg_bam/"
+    move_old = f"mv {path} {path.replace(".bam", ".bai")} no_rg_bam/"
     move_new = f"mv rg_fix_temp/{file_name} rg_fix_temp/{file_name.replace(".bam", ".bai")} ./"
     
     full_script = f"{script_header}\n{rg_replace_line}\n{index_line}\n{move_old}\n{move_new}\n"
@@ -49,6 +48,4 @@ for path in bam_paths:
     
     with open(script_path, "w") as file:
         file.write(full_script)
-
-
 
