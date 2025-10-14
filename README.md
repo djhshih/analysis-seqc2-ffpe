@@ -154,8 +154,25 @@ https://www.atcc.org/products/crl-2325
 
 ## To Do 
 
-Rename directories:
-data/ref -> data/gatk-reference-genome
-data/reference_genome -> data/seqc2-reference-genome
+- Rename directories:
+    - data/ref -> data/gatk-reference-genome (Done)
+    - data/reference_genome -> data/seqc2-reference-genome (Done)
 
-update these changes in the variant calling scripts when that finishes: vcf/bam_variant_mutect2/prepare.py
+- Update these changes in the variant calling scripts when that finishes: vcf/bam_variant_mutect2/prepare.py (Done)
+
+- Figure out why Variant Calling Fails for some samples:
+
+    - It was observed that some BAMs do not have sample names in their read groups. Therefore, the sample name cannot be extracted from the BAM files, as is done in WDL workflow.
+
+## Issues
+
+- BAMs from the FFG dataset do not have read groups. This causes failure during variant calling with GATK Mutect2.
+- This issue was resolved by adding read groups to the BAM files using `samtools addreplacerg` command.
+
+- The the exome target regions BED file provided in the FTP have contigs that are not present in the reference genome also provided in the FTP.
+- This issue was partially resolved by using the WGS calling regions instead. However, some variant calling still fails. It seems mutect2 gets stuck on particular regions.
+
+- WES VCFs from the FTP are messed up. They cannot be parsed using bcftools.
+- Custom fixes need to be applied to these VCFs to make them parsable.
+
+- VCFs under FFX datasets are still WES as evident by VCF header and file name.
