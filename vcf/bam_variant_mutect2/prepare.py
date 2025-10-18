@@ -18,6 +18,7 @@ bundle_root = "../../data/gatk-test-data/mutect2"
 intervals_root = "../../data/gatk-reference-genome"
 gatk_path = "/home/moyukh/miniconda3/envs/ffpe-bench/share/gatk4-4.6.2.0-0/gatk-package-4.6.2.0-local.jar"
 
+
 out_dir = 'inputs'
 
 if not os.path.exists(out_dir):
@@ -25,17 +26,17 @@ if not os.path.exists(out_dir):
 
 wgs_normal_bam = os.path.abspath("../../data/bam/WGS/WGS_IL_N_1.bwa.dedup.bam")
 wes_normal_bam = os.path.abspath("../../data/bam/WES/WES_IL_N_2.bwa.dedup.bam")
-amplicon_normal_bam = os.path.abspath("../../data/bam/AmpliSeq_bams/AMS_AB_N_1.bwa.bam")
+amplicon_normal_bam = os.path.abspath("../../data/bam/AMS/AMS_AB_N_1.bwa.bam")
 # wes_target_regions = os.path.abspath("../../data/seqc2-reference-genome/Exome_Target_bed/S07604624_Covered_human_all_v6_plus_UTR.liftover.to.hg38.bed")
-
+std_chr_list = os.path.abspath("../../data/misc/standard_chromosomes.list")
 
 ref_fpath = os.path.abspath(os.path.join(ref_root, ref_fname))
 vcf_path = os.path.abspath(vcf_root)
 bundle_path = os.path.abspath(bundle_root)
 intervals_path = os.path.abspath(intervals_root)
 
-# annot_path = '../../annot/sample_annotation.tsv'
-# annot = pd.read_csv(annot_path, sep='\t')
+annot_path = '../../annot/sample_annotation.tsv'
+annot = pd.read_csv(annot_path, sep='\t')
 
 bam_paths = glob.glob(f"{bam_root}/*/*.bam")
 
@@ -52,10 +53,10 @@ base = {
 	'bam_variant_mutect2.variants_for_contamination':  os.path.join(vcf_path, 'small_exac_common_3.hg38.vcf.gz'),
 	'bam_variant_mutect2.variants_for_contamination_idx': os.path.join(vcf_path, 'small_exac_common_3.hg38.vcf.gz.tbi'),
 	'bam_variant_mutect2.realignment_index_bundle': os.path.join(bundle_path, 'Homo_sapiens_assembly38.index_bundle'),
-	'bam_variant_mutect2.scatter_count': 4,
+	'bam_variant_mutect2.scatter_count': 16,
 	'bam_variant_mutect2.gatk_docker': 'broadinstitute/gatk:4.6.2.0',
 	'bam_variant_mutect2.gatk_override': gatk_path,
-	'bam_variant_mutect2.bam_mutect2.mem': 4,
+	'bam_variant_mutect2.mutect2_scatter_mem_gb': 8,
 	'bam_variant_mutect2.run_orientation_bias_mixture_model_filter': True,
 }
 
@@ -64,7 +65,7 @@ for path in bam_paths:
 	
 	study_alias = path.split("/")[-2]
 	sample_name = os.path.basename(path).replace(".bam", "").replace(".dedup", "")
- 
+
 	if (("_N_" in sample_name) | ("HCC1395BL" in sample_name)):
 		print(f"Skipping {sample_name} since it is normal")
 		continue
@@ -90,7 +91,7 @@ for path in bam_paths:
 		out['bam_variant_mutect2.normal_bam'] = wgs_normal_bam
 		out['bam_variant_mutect2.normal_bai'] = wgs_normal_bam.replace(".bam", ".bai")
 	elif study_alias in ["AMS"]:
-		out['bam_variant_mutect2.intervals'] = os.path.join(intervals_path, 'wgs_calling_regions.hg38.interval_list')
+		out['bam_variant_mutect2.intervals'] = std_chr_list
 		out['bam_variant_mutect2.m2_extra_args'] = '--disable-read-filter NotDuplicateReadFilter --downsampling-stride 50 --linked-de-bruijn-graph --max-reads-per-alignment-start 0' #  --max-reads-per-alignment-start 500 --dont-use-soft-clipped-bases --annotations-to-exclude StrandBiasBySample --annotations-to-exclude ReadPosRankSumTest
 		out['bam_variant_mutect2.normal_bam'] = amplicon_normal_bam
 		out['bam_variant_mutect2.normal_bai'] = f"{amplicon_normal_bam}.bai"
