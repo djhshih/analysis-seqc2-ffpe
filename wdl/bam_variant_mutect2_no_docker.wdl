@@ -797,6 +797,9 @@ workflow bam_variant_mutect2 {
       Int learn_read_orientation_mem = 8000
       Int filter_alignment_artifacts_mem = 9000
 
+      # Memory in GB for each Mutect2 scatter job
+      Int? mutect2_scatter_mem_gb
+
       # Use as a last resort to increase the disk given to every task in case of ill behaving data
       Int? emergency_extra_disk
 
@@ -888,7 +891,8 @@ workflow bam_variant_mutect2 {
                 gga_vcf_idx = gga_vcf_idx,
                 gatk_override = gatk_override,
                 gatk_docker = gatk_docker,
-                disk_space = m2_per_scatter_size
+                disk_space = m2_per_scatter_size,
+				mem = mutect2_scatter_mem_gb
         }
     }
 
