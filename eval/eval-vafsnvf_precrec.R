@@ -2,7 +2,7 @@
 library(io)
 library(precrec)
 
-source("../../common-ffpe-snvf/R/eval.R")
+source("../common-ffpe-snvf/R/eval.R")
 
 #####################################################################################
 
@@ -35,7 +35,7 @@ process_samples <- function(ffpe_snvf_dir, model_name, ground_truth_variants, ou
 
 		# Read and preprocess the data, annotating with truth labels
 		d <- read.delim(path)
-		d <- preprocess_mobsnvf(d, ground_truth_variants)
+		d <- preprocess_vafsnvf(d, ground_truth_variants)
 
 		# Check if truth labels are not exclusively TRUE or FALSE.
 		# Cases like these are skipped as evaluation is not supported by precrec.
@@ -92,7 +92,7 @@ combine_snv_score_truth <- function(score_truth_outdir, model_name) {
 
 #################################################################################
 
-model_name <- "mobsnvf"
+model_name <- "vafsnvf"
 message(sprintf("Evaluating %s: ", model_name))
 
 ################################# SEQC2 FFX  ########################################
@@ -150,7 +150,6 @@ if (nrow(all_score_truth) > 0) {
 }
 
 ################################# SEQC2 FFG  ########################################
-
 
 # Setup Directories and lookup table for FFG dataset
 

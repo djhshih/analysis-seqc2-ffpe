@@ -2,7 +2,7 @@
 library(io)
 library(precrec)
 
-source("../../common-ffpe-snvf/R/eval.R")
+source("../common-ffpe-snvf/R/eval.R")
 
 #####################################################################################
 
@@ -17,7 +17,7 @@ process_samples <- function(ffpe_snvf_dir, model_name, ground_truth_variants, ou
 	message("Processing samples with a unified ground truth:")
 
 	# Construct the search path to find all of the model's result files
-	search_path <- file.path(ffpe_snvf_dir, "*", "*.vcf")
+	search_path <- file.path(ffpe_snvf_dir, model_name, "*", sprintf("*.%s.snv", model_name))
 	model_result_paths <- Sys.glob(search_path)
 
 	if (length(model_result_paths) == 0) {
@@ -34,8 +34,8 @@ process_samples <- function(ffpe_snvf_dir, model_name, ground_truth_variants, ou
 		message(sprintf("	%s", sample_name))
 
 		# Read and preprocess the data, annotating with truth labels
-		d <- read_vcf(path, c('chrom', 'pos', 'ref', 'alt', 'filter'))
-		d <- preprocess_gatk_obmm(d, ground_truth_variants)
+		d <- read.delim(path)
+		d <- preprocess_mobsnvf(d, ground_truth_variants)
 
 		# Check if truth labels are not exclusively TRUE or FALSE.
 		# Cases like these are skipped as evaluation is not supported by precrec.
@@ -92,7 +92,7 @@ combine_snv_score_truth <- function(score_truth_outdir, model_name) {
 
 #################################################################################
 
-model_name <- "gatk-obmm"
+model_name <- "mobsnvf"
 message(sprintf("Evaluating %s: ", model_name))
 
 ################################# SEQC2 FFX  ########################################
@@ -107,7 +107,7 @@ message(sprintf("Dataset: %s", dataset_id))
 # Directory for the Somatic VCFs
 vcf_dir <- "../vcf/mutect2-matched-normal_pass-orientation-filtered"
 # Directory for the FFPE SNV filtering results
-ffpe_snvf_dir <- sprintf("%s/%s", vcf_dir, dataset_id)
+ffpe_snvf_dir <- sprintf("../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
 # Root output directory
 outdir_root <- sprintf("mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
 # Specific output directory for combined scores and truths
@@ -126,7 +126,7 @@ message("Ground truth generated.")
 process_samples(
     ffpe_snvf_dir = ffpe_snvf_dir, 
     model_name = model_name, 
-    ground_truth_variants = ff_variants,
+    ground_truth_variants = ff_variants, 
     outdir_root = outdir_root
 )
 
@@ -151,6 +151,7 @@ if (nrow(all_score_truth) > 0) {
 
 ################################# SEQC2 FFG  ########################################
 
+
 # Setup Directories and lookup table for FFG dataset
 
 dataset_id <- "FFG"
@@ -160,7 +161,7 @@ message(sprintf("Dataset: %s", dataset_id))
 # Directory for the Somatic VCFs
 vcf_dir <- "../vcf/mutect2-matched-normal_pass-orientation-filtered"
 # Directory for the FFPE SNV filtering results
-ffpe_snvf_dir <- sprintf("%s/%s", vcf_dir, dataset_id)
+ffpe_snvf_dir <- sprintf("../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
 # Root output directory
 outdir_root <- sprintf("mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
 # Specific output directory for combined scores and truths
