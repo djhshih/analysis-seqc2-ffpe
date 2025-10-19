@@ -128,9 +128,9 @@ for (sample in seq_len(nrow(sample_info))) {
 
     inputs_dir <- dirname(mutation_file)
 
-    slim_bam_dir <- file.path(inputs_dir," microsec/inputs/slim-bam", sample_name) #paste0("../../microsec/inputs/slim-bam/", sample_name)
+    slim_bam_dir <- file.path(inputs_dir, "slim-bam", sample_name) #paste0("../../microsec/inputs/slim-bam/", sample_name)
     dir.create(slim_bam_dir, showWarnings = FALSE, recursive = TRUE)
-    sorted_bam_dir <- file.path(inputs_dir, "microsec/inputs/sorted-bam", sample_name)
+    sorted_bam_dir <- file.path(inputs_dir, "sorted-bam", sample_name)
     dir.create(sorted_bam_dir, showWarnings = FALSE, recursive = TRUE)
     bam_file_slim <- paste0(slim_bam_dir, sub(".bam", "", basename(bam_file)), ".SLIM.bam")
     bam_file_tmp <- paste0(slim_bam_dir, sub(".bam", "", basename(bam_file)), ".tmp.bam")
@@ -281,7 +281,7 @@ for (sample in seq_len(nrow(sample_info))) {
             }
         }
 
-        bed_dir <- file.path(inputs_dir, "microsec/inputs/bed", sample_name)
+        bed_dir <- file.path(inputs_dir, "bed", sample_name)
         dir.create(bed_dir, showWarnings = FALSE, recursive = TRUE)
         bed_file <- paste0(bed_dir, sub(".bam", "", basename(bam_file)), ".bed")
         write_tsv(x = download_region, file = bed_file, progress = F, col_names = F)
