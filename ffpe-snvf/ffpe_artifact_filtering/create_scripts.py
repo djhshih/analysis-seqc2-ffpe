@@ -3,7 +3,7 @@ import glob
 import polars as pl
 
 
-ffpe_datasets = ["FFG", "FFX", "AMS"]
+ffpe_datasets = ["FFG", "FFX"]
 models = ["mobsnvf", "vafsnvf", "sobdetector"]
 
 
