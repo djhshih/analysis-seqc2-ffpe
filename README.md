@@ -339,4 +339,4 @@ Skipped:
     - Custom fixes need to be applied to these VCFs to make them parsable.
     - For now, FFPE filtering using these VCFs are skipped in favor of the VCFs called by these BAMs
 
-- VCFs under FFX datasets are still WES as evident by VCF header and file name.
+- VCFs under FFX datasets are from WES dataset as evident by VCF header and file name.
