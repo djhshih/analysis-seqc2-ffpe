@@ -11,6 +11,14 @@ dset_author <- c(
 	"FFG" =  "SEQC-II WGS FFPE"
 )
 
+models <- c(
+	"mobsnvf" = "MOBSNVF",
+	"vafsnvf" = "VAFSNVF",
+	"gatk-obmm" = "GATK-OBMM",
+	"sobdetector" = "SOBDetector",
+	"microsec" = "MicroSEC"
+)
+
 for (dir in dset_dirs){
 
 	dset <- unlist(strsplit(dir, "/"))[2]
@@ -42,15 +50,18 @@ for (dir in dset_dirs){
 		# snv_count <- nrow(eval_snv_set)
 
 		roc_coord <- qread(roc_coord_paths[i])
-		prc_coord <- qread(prc_coord_paths[i])
+		roc_coord$model <- ifelse(roc_coord$model %in% names(models), models[roc_coord$model], roc_coord$model)
 
-		plots <- make_roc_prc_plot(roc_coord, prc_coord, title = dset_author[dset], subtitle = NULL, caption = NULL, text_scale=1.5, line_width = 1, individual_plots = TRUE)
+		prc_coord <- qread(prc_coord_paths[i])
+		prc_coord$model <- ifelse(prc_coord$model %in% names(models), models[prc_coord$model], prc_coord$model)
+
+		plots <- make_roc_prc_plot(roc_coord, prc_coord, title = dset_author[dset], subtitle = NULL, caption = NULL, text_scale=2, line_width = 1.5, legend_rows = 2, individual_plots = TRUE)
 
 		qdraw(plots$roc_prc, glue("{outdir}/{sample_name}_roc_prc_plot.pdf"), width = 7, height = 5)
 		dir.create(glue("{outdir}/roc"))
-		qdraw(plots$roc, glue("{outdir}/roc/{sample_name}_roc_plot.pdf"), width = 4, height = 5)
+		qdraw(plots$roc, glue("{outdir}/roc/{sample_name}_roc_plot.pdf"), width = 5, height = 5)
 		dir.create(glue("{outdir}/prc"))
-		qdraw(plots$prc, glue("{outdir}/prc/{sample_name}_prc_plot.pdf"), width = 4, height = 5)
+		qdraw(plots$prc, glue("{outdir}/prc/{sample_name}_prc_plot.pdf"), width = 5, height = 5)
 
 	}
 }
