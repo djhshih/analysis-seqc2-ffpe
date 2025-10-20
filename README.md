@@ -39,6 +39,7 @@ Here, matched FFPE and Fresh Frozen (FF) samples from the Sequencing Quality Con
     - GenomeInfoDb
     - BSgenome.Hsapiens.UCSC.hg38
 
+
 ### Python Libraries
 - polars
 - pysam
@@ -46,7 +47,6 @@ Here, matched FFPE and Fresh Frozen (FF) samples from the Sequencing Quality Con
 - numpy
 - matplotlib
 - seaborn
-
 
 
 ## Study
@@ -218,7 +218,7 @@ https://www.atcc.org/products/crl-2325
 
 8. Navigate to the `vcf/mutect2-matched-normal_pass-orientation-filtered` directory and run:
     ```bash
-        bash filter_vcf.sh
+    bash filter_vcf.sh
     ```
     This will filter the VCFs to only retain the vatiants with either a "PASS" or "orientation" annotation in the filter column.
     We keep the orientation annotated variants to evaluate the performance of GATK's Orientation Bias Mixture Model later on against other FFPE artifact filtering models.
@@ -236,7 +236,7 @@ https://www.atcc.org/products/crl-2325
 9. Navigate to the `eval` directory and run:
 
     ```bash
-        bash run.sh
+    bash run.sh
     ```
 
     This will create evaluation results in the following directory `eval/mutect2-matched-normal_pass-orientation-filtered/<dataset_id>` under the following subdirectories:
