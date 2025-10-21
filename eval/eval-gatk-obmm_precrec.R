@@ -90,6 +90,63 @@ combine_snv_score_truth <- function(score_truth_outdir, model_name) {
 	return(all_score_truth)
 }
 
+
+evaluate_dataset <- function(
+	dataset_id,
+	ff_dataset_id,
+	vcf_dir,
+	ffpe_snvf_dir,
+	outdir_root,
+	model_name,
+	agg_name
+){
+	message(sprintf("Dataset: %s", dataset_id))
+
+	# Directory for the FFPE SNV filtering results
+	ffpe_snvf_dir <- file.path(ffpe_snvf_dir, dataset_id)
+	# Root output directory
+	outdir_root <- file.path(outdir_root, dataset_id)
+	# Specific output directory for combined scores and truths
+	score_truth_outdir <- file.path(outdir_root, "model-scores_truths")
+	# Specific output directory for evaluation plots and metrics
+	eval_outdir <- file.path(outdir_root, "roc-prc-auc/precrec")
+
+
+	# Create a unified ground truth by taking the union of all variants from Fresh Frozen samples
+	message(sprintf("Generating unified ground truth from all Fresh Frozen samples (%s dataset)...", ff_dataset_id))
+	ff_paths <- Sys.glob(file.path(vcf_dir, sprintf("%s/*/*_T_*.vcf", ff_dataset_id)))
+	ff_variants <- snv_union(ff_paths)
+	message("Ground truth generated.")
+
+	# Perform per-sample evaluation
+	process_samples(
+		ffpe_snvf_dir = ffpe_snvf_dir, 
+		model_name = model_name, 
+		ground_truth_variants = ff_variants,
+		outdir_root = outdir_root
+	)
+
+	# Combine the per-sample score/truth tables into a single data frame
+	all_score_truth <- combine_snv_score_truth(
+		score_truth_outdir = score_truth_outdir, 
+		model_name = model_name
+	)
+
+	# Proceed with overall evaluation if combined data is available
+	if (nrow(all_score_truth) > 0) {
+		message("Performing overall evaluation...")
+		## Evaluate overall result
+		overall_res <- evaluate_filter(all_score_truth, model_name, agg_name)
+
+		## Write overall result to disk
+		write_overall_eval(all_score_truth, overall_res, score_truth_outdir, eval_outdir, agg_name, model_name)
+		message("Overall evaluation complete.")
+	} else {
+		message("Skipping overall evaluation as no combined score/truth data was generated.")
+	}
+}
+
+
 #################################################################################
 
 model_name <- "gatk-obmm"
@@ -98,106 +155,48 @@ message(sprintf("Evaluating %s: ", model_name))
 ################################# SEQC2 FFX  ########################################
 
 
-# Setup Directories and lookup table for FFX dataset
-
-dataset_id <- "FFX"
-ff_dataset_id <- "WES"
-message(sprintf("Dataset: %s", dataset_id))
-
-# Directory for the Somatic VCFs
-vcf_dir <- "../vcf/mutect2-matched-normal_pass-orientation-filtered"
-# Directory for the FFPE SNV filtering results
-ffpe_snvf_dir <- sprintf("%s/%s", vcf_dir, dataset_id)
-# Root output directory
-outdir_root <- sprintf("mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
-# Specific output directory for combined scores and truths
-score_truth_outdir <- sprintf("%s/model-scores_truths", outdir_root)
-# Specific output directory for evaluation plots and metrics
-eval_outdir <- sprintf("%s/roc-prc-auc/precrec", outdir_root)
-
-
-# Create a unified ground truth by taking the union of all variants from Fresh Frozen samples
-message(sprintf("Generating unified ground truth from all Fresh Frozen samples (%s dataset)...", ff_dataset_id))
-ff_paths <- Sys.glob(file.path(vcf_dir, sprintf("%s/*/*_T_*.vcf", ff_dataset_id)))
-ff_variants <- snv_union(ff_paths)
-message("Ground truth generated.")
-
-# Perform per-sample evaluation
-process_samples(
-    ffpe_snvf_dir = ffpe_snvf_dir, 
-    model_name = model_name, 
-    ground_truth_variants = ff_variants,
-    outdir_root = outdir_root
+# Filtered FFX vs Unfiltered WES VCF
+evaluate_dataset(
+	dataset_id = "FFX",
+	ff_dataset_id = "WES",
+	vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
+	ffpe_snvf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wes-samples"
 )
 
-# Combine the per-sample score/truth tables into a single data frame
-all_score_truth <- combine_snv_score_truth(
-    score_truth_outdir = score_truth_outdir, 
-    model_name = model_name
+# Filtered FFX vs Filtered WES VCF
+evaluate_dataset(
+	dataset_id = "FFX",
+	ff_dataset_id = "WES",
+	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	ffpe_snvf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wes-samples"
 )
-
-# Proceed with overall evaluation if combined data is available
-if (nrow(all_score_truth) > 0) {
-    message("Performing overall evaluation...")
-    ## Evaluate overall result
-    overall_res <- evaluate_filter(all_score_truth, model_name, "all-ffpe-wes-samples")
-
-    ## Write overall result to disk
-    write_overall_eval(all_score_truth, overall_res, score_truth_outdir, eval_outdir, "all-ffpe-wes-samples", model_name)
-    message("Overall evaluation complete.")
-} else {
-    message("Skipping overall evaluation as no combined score/truth data was generated.")
-}
 
 ################################# SEQC2 FFG  ########################################
 
-# Setup Directories and lookup table for FFG dataset
-
-dataset_id <- "FFG"
-ff_dataset_id <- "WGS"
-message(sprintf("Dataset: %s", dataset_id))
-
-# Directory for the Somatic VCFs
-vcf_dir <- "../vcf/mutect2-matched-normal_pass-orientation-filtered"
-# Directory for the FFPE SNV filtering results
-ffpe_snvf_dir <- sprintf("%s/%s", vcf_dir, dataset_id)
-# Root output directory
-outdir_root <- sprintf("mutect2-matched-normal_pass-orientation-filtered/%s", dataset_id)
-# Specific output directory for combined scores and truths
-score_truth_outdir <- sprintf("%s/model-scores_truths", outdir_root)
-# Specific output directory for evaluation plots and metrics
-eval_outdir <- sprintf("%s/roc-prc-auc/precrec", outdir_root)
-
-
-# Create a unified ground truth by taking the union of all variants from Fresh Frozen samples
-message(sprintf("Generating unified ground truth from all Fresh Frozen samples (%s dataset)...", ff_dataset_id))
-ff_paths <- Sys.glob(file.path(vcf_dir, sprintf("%s/*/*_T_*.vcf", ff_dataset_id)))
-ff_variants <- snv_union(ff_paths)
-message("Ground truth generated.")
-
-# Perform per-sample evaluation
-process_samples(
-    ffpe_snvf_dir = ffpe_snvf_dir, 
-    model_name = model_name, 
-    ground_truth_variants = ff_variants, 
-    outdir_root = outdir_root
+# Fitlered FFG vs Unfiltered WGS VCF
+evaluate_dataset(
+	dataset_id = "FFG",
+	ff_dataset_id = "WGS",
+	vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
+	ffpe_snvf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wgs-samples"
 )
 
-# Combine the per-sample score/truth tables into a single data frame
-all_score_truth <- combine_snv_score_truth(
-    score_truth_outdir = score_truth_outdir, 
-    model_name = model_name
+#  Filtered FFG dataset vs Filtered WGS VCF
+evaluate_dataset(
+	dataset_id = "FFG",
+	ff_dataset_id = "WGS",
+	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	ffpe_snvf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wgs-samples"
 )
-
-# Proceed with overall evaluation if combined data is available
-if (nrow(all_score_truth) > 0) {
-    message("Performing overall evaluation...")
-    ## Evaluate overall result
-    overall_res <- evaluate_filter(all_score_truth, model_name, "all-ffpe-wgs-samples")
-
-    ## Write overall result to disk
-    write_overall_eval(all_score_truth, overall_res, score_truth_outdir, eval_outdir, "all-ffpe-wgs-samples", model_name)
-    message("Overall evaluation complete.")
-} else {
-    message("Skipping overall evaluation as no combined score/truth data was generated.")
-}

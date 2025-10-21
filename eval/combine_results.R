@@ -3,8 +3,10 @@ library(io)
 
 ## Dataset specific
 eval_dirs = c(
-		"mutect2-matched-normal_pass-orientation-filtered/FFX/roc-prc-auc/precrec",
-		"mutect2-matched-normal_pass-orientation-filtered/FFG/roc-prc-auc/precrec"
+		"mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
+		"mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
+		"mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFX/roc-prc-auc/precrec",
+		"mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFG/roc-prc-auc/precrec"
 	)
 
 for (eval_dir in eval_dirs){

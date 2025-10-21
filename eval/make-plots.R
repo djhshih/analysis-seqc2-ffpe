@@ -2,8 +2,10 @@
 source("../common-ffpe-snvf/R/plot.R")
 
 dset_dirs <- c(
-	"mutect2-matched-normal_pass-orientation-filtered/FFX",
-	"mutect2-matched-normal_pass-orientation-filtered/FFG"
+	"mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFX",
+	"mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFG",
+	"mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFX",
+	"mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFG"
 )
 
 dset_author <- c(
@@ -21,7 +23,8 @@ models <- c(
 
 for (dir in dset_dirs){
 
-	dset <- unlist(strsplit(dir, "/"))[2]
+	tokens <- unlist(strsplit(dir, "/"))
+	dset <- tokens[length(tokens)]
 	message(sprintf("Processing dataset: %s", dset))
 
 	## Set output directory
