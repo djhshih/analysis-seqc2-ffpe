@@ -9,7 +9,7 @@ root_outdir=$3
 vcf_name=$(basename $vcf_path)
 sample_name=${vcf_name%%.*}
 
-ref=../../../data/seqc2-reference-genome/GRCh38/GRCh38.d1.vd1.fa
+ref=../../../../data/seqc2-reference-genome/GRCh38/GRCh38.d1.vd1.fa
 
 # vcf_indir=../../../data/vcf_ad_filtered
 # bam_indir=../../../data/bam
