@@ -96,7 +96,7 @@ Only the **WGS**, **WES**, **FFG** and **FFX** datasets are relevant to our proj
 - **FFG:** Whole Genome Sequencing (WGS) data sets for Formalin-Fixed Paraffin-Embedded (FFPE) process with fixation time of 1, 2, 6, or 24 hours for DNA extracted from HCC1395BL and HCC1395 cell lines
     - **Preservation Method:** FFPE
     - **Cell Lines:** HCC1395BL (Normal), HCC1395 (Tumor)
-    - **Sample Size:** 24 (12 Tumor, 12 Normal) 
+    - **Sample Size:** 26 (13 Tumor, 13 Normal) 
     - **Sequencing Centers:** 2 (GZ, IL)
     - **Sequencing method:** Whole Genome
     - **Source Data Types:** 13 Tumor, 13 Normal

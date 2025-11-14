@@ -7,3 +7,12 @@
 **/sbatch_log
 **/*.bam
 **/*.bai
+**/model-scores_truths
+**/plots_publication
+**/roc-prc-auc
+*.log
+**/release
+*.vcf*
+*.snv
+*.inputs
+**/tools
