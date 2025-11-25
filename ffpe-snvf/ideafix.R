@@ -23,17 +23,17 @@ message(cat(sprintf("\nProcessing %s \n", sample_name)))
 message(cat("\tGetting descriptors from VCF \n"))
 descriptors <- get_descriptors(vcf_filename = vcf_filename, fasta_filename = ref_genome)
 
-message(cat("\n\tRunning IdeaFix XGBoost Model \n"))
+message(cat("\n\tRunning IdeaFix XGBoost Model\n"))
 predictions_xgboost <- classify_variants(variant_descriptors = descriptors, algorithm = "XGBoost")
 names(predictions_xgboost) <- tolower(names(predictions_xgboost))
 
-message(cat("\n\tRunning IdeaFix RF Model \n"))
-predictions_rf <- classify_variants(variant_descriptors = descriptors, algorithm = "RF")
-names(predictions_rf) <- tolower(names(predictions_rf))
+# message(cat("\n\tRunning IdeaFix RF Model (Default) \n"))
+# predictions_rf <- classify_variants(variant_descriptors = descriptors, , algorithm = "RF")
+# names(predictions_rf) <- tolower(names(predictions_rf))
 
 message(cat(sprintf("\n\tWriting outputs to: %s \n", outdir)))
 qwrite(descriptors, file.path(outdir, sprintf("%s.ideafix.descriptors.tsv", sample_name)))
 qwrite(predictions_xgboost, file.path(outdir, sprintf("%s.ideafix-xgboost.tsv", sample_name)))
-qwrite(predictions_rf, file.path(outdir, sprintf("%s.ideafix-rf.tsv", sample_name)))
+# qwrite(predictions_rf, file.path(outdir, sprintf("%s.ideafix-rf.tsv", sample_name)))
 
 message(cat("\n\tComplete"))
