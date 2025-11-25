@@ -23,6 +23,11 @@ for vcf in ../mutect2-matched-normal_filtermutectcalls_obmm_unfiltered/*/*/*.vcf
 
     out_path=${out_dir}/${file_name}.vcf
 
+    if [[ -f $out_path ]]; then
+        echo $out_path already exists.
+        continue
+    fi
+
     bcftools view -i "$filter_expression" $vcf -o $out_path
 
     echo -e "\nFiltered vcf saved at: $out_path \n"

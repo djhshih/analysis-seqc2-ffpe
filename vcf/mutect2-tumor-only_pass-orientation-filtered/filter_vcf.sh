@@ -2,13 +2,12 @@
 
 ## This script filters the mutect2 variants after the FilterMutectCalls stage. 
 ## Variants with "PASS" and "Orientation" annotation in the Filter Column are retained
-## Additionally filters for tumor sample depth >= 10
 
 set -euo pipefail
 
-filter_expression="(FILTER='PASS' | FILTER='orientation') & FORMAT/DP[0] >= 10"
+filter_expression="FILTER='PASS' | FILTER='orientation'"
 
-for vcf in ../mutect2-matched-normal_filtermutectcalls_obmm_unfiltered/{FFG,WGS,WES,FFX}/*/*.vcf; do
+for vcf in ../mutect2-tumor-only_filtermutectcalls_obmm_unfiltered/*/*/*.vcf; do
 
     echo -e "\nProcessing $vcf \n"
 
