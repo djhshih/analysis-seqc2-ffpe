@@ -35,7 +35,7 @@ for dataset in datasets:
 
 			variants = read_variants(path)
 
-			outdir = f"{dataset}/{variant_type}/gatk-obmm/{sample_name}"
+			outdir = f"{variant_type}/{dataset}/gatk-obmm/{sample_name}"
 			os.makedirs(outdir, exist_ok=True)
 
 			variants.write_csv(f"{outdir}/{sample_name}.tsv", separator="\t")
