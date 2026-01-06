@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-filter_expression="(FILTER='PASS' | FILTER='orientation') & FORMAT/DP[0] >= 10"
+filter_expression="(FILTER='PASS' | FILTER='orientation') & MIN(FMT/DP)>=10"
 
 for vcf in ../mutect2-matched-normal_filtermutectcalls_obmm_unfiltered/{FFG,WGS,WES,FFX}/*/*.vcf; do
 
