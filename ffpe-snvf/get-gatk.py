@@ -38,7 +38,5 @@ for dataset in datasets:
 			outdir = f"{variant_type}/{dataset}/gatk-obmm/{sample_name}"
 			os.makedirs(outdir, exist_ok=True)
 
-			variants.write_csv(f"{outdir}/{sample_name}.tsv", separator="\t")
-
-
+			variants.write_csv(f"{outdir}/{sample_name}.gatk-obmm.tsv", separator="\t")
 
