@@ -17,7 +17,7 @@ process_samples <- function(ffpe_snvf_dir, model_name, ground_truth_variants, ou
 	message("Processing samples with a unified ground truth:")
 
 	# Construct the search path to find all of the model's result files
-	search_path <- file.path(ffpe_snvf_dir, model_name, "*", sprintf("*.%s.snv", model_name))
+	search_path <- file.path(ffpe_snvf_dir, model_name, "*", sprintf("*.%s.tsv", model_name))
 	model_result_paths <- Sys.glob(search_path)
 
 	if (length(model_result_paths) == 0) {
@@ -35,7 +35,7 @@ process_samples <- function(ffpe_snvf_dir, model_name, ground_truth_variants, ou
 
 		# Read and preprocess the data, annotating with truth labels
 		d <- read.delim(path)
-		d <- preprocess_vafsnvf(d, ground_truth_variants)
+		d <- preprocess_ffpolish(d, ground_truth_variants)
 
 		# Check if truth labels are not exclusively TRUE or FALSE.
 		# Cases like these are skipped as evaluation is not supported by precrec.
@@ -161,7 +161,7 @@ evaluate_dataset <- function(
 
 #################################################################################
 
-model_name <- "vafsnvf"
+model_name <- "ffpolish"
 message(sprintf("Evaluating %s: ", model_name))
 
 # ################################# SEQC2 FFX w/ Matched Normal ########################################

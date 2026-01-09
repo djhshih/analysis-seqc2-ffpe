@@ -3,13 +3,14 @@ library(io)
 
 ## Dataset specific
 eval_dirs <- c(
-		"mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
+		"mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
+		"mutect2-matched-normal_pass-orientation-dp-filtered_micr1234.vs.filtered-ff/FFX/roc-prc-auc/precrec"
+		# "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
 		# "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		"mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		"mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec"
-		# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
+		# # "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
+		# "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
+		# # "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
+		# "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec"
 		# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
 		# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
 		# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
@@ -25,7 +26,7 @@ eval_dirs <- c(
 
 for (eval_dir in eval_dirs){
 	## List name of models that were evaluated. 
-	models <- c("all-models", "mobsnvf", "vafsnvf", "sobdetector", "gatk-obmm", "microsec", "ideafix-rf", "ideafix-xgboost")
+	models <- c("all-models", "mobsnvf", "vafsnvf", "sobdetector", "gatk-obmm", "microsec", "ideafix-rf", "ideafix-xgboost", "ffpolish")
 
 	## Combine the AUC table for each sample and overall eval i.e all sample, liver samples, colon samples
 	message("Combining AUCs")

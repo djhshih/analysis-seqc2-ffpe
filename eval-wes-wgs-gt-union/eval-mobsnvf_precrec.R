@@ -93,7 +93,7 @@ combine_snv_score_truth <- function(score_truth_outdir, model_name) {
 evaluate_dataset <- function(
 	dataset_id,
 	ff_dataset_id,
-	vcf_dir,
+	ff_vcf_dir,
 	ffpe_snvf_dir,
 	outdir_root,
 	model_name,
@@ -111,20 +111,24 @@ evaluate_dataset <- function(
 	# Specific output directory for evaluation plots and metrics
 	eval_outdir <- file.path(outdir_root, "roc-prc-auc/precrec")
 
+	##----------------
 
 	# Create a unified ground truth by taking the union of all variants from Fresh Frozen samples
 	message("Generating unified ground truth from all Fresh Frozen samples (WES + WGS dataset)...")
-	ff_paths <- c(Sys.glob(file.path(vcf_dir, "WGS/*/*_T_*.vcf")), Sys.glob(file.path(vcf_dir, "WES/*/*_T_*.vcf")))
+	ff_paths <- c(Sys.glob(file.path(ff_vcf_dir, "WGS/*/*_T_*.vcf")), Sys.glob(file.path(ff_vcf_dir, "WES/*/*_T_*.vcf")))
 
-	gt_name <- "WES_WGS_ff-variants_set.tsv"
-	if (file.exists(gt_name)){
+	dir.create(file.path("ground-truth", basename(ff_vcf_dir)), recursive = TRUE, showWarnings = FALSE)
+	gt_path <- file.path("ground-truth", basename(ff_vcf_dir) ,"WES_WGS_ff-variants_set.tsv")
+	if (file.exists(gt_path)){
 		message("Using pregenerated ground truth")
-		ff_variants <- qread(gt_name)
+		ff_variants <- qread(gt_path)
 	} else {
 		ff_variants <- snv_union(ff_paths)
 		message("Ground truth generated.")
-		qwrite(ff_variants, "WES_WGS_ff-variants_set.tsv")
+		qwrite(ff_variants, gt_path)
 	}
+
+	##------------------
 
 	# Perform per-sample evaluation
 	process_samples(
@@ -147,7 +151,7 @@ evaluate_dataset <- function(
 		overall_res <- evaluate_filter(all_score_truth, model_name, agg_name)
 
 		## Write overall result to disk
-		write_overall_eval(all_score_truth, overall_res, score_truth_outdir, eval_outdir, agg_name, model_name)
+		write_overall_eval(all_score_truth, overall_res, outdir_root, agg_name, model_name)
 		message("Overall evaluation complete.")
 	} else {
 		message("Skipping overall evaluation as no combined score/truth data was generated.")
@@ -166,7 +170,7 @@ message(sprintf("Evaluating %s: ", model_name))
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff",
 # 	model_name = model_name,
@@ -178,7 +182,7 @@ message(sprintf("Evaluating %s: ", model_name))
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff",
 # 	model_name = model_name,
@@ -189,7 +193,7 @@ message(sprintf("Evaluating %s: ", model_name))
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff",
 # 	model_name = model_name,
@@ -200,42 +204,42 @@ message(sprintf("Evaluating %s: ", model_name))
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp20-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff",
 # 	model_name = model_name,
 # 	agg_name = "all-ffpe-wes-samples"
 # )
 
-# Filtered FFX dataset vs Filtered WES VCF; MICR removed
+# # Filtered FFX dataset vs Filtered WES VCF; MICR removed
+# evaluate_dataset(
+# 	dataset_id = "FFX",
+# 	ff_dataset_id = "WES",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+# 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered_micr",
+# 	outdir_root = "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff",
+# 	model_name = model_name,
+# 	agg_name = "all-ffpe-wes-samples"
+# )
+
+# Filtered FFX dataset vs Filtered WES VCF, DP >= 10; MICR1234 removed
 evaluate_dataset(
 	dataset_id = "FFX",
 	ff_dataset_id = "WES",
-	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
-	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered_micr",
-	outdir_root = "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff",
+	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
+	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp-filtered_micr1234",
+	outdir_root = "mutect2-matched-normal_pass-orientation-dp-filtered_micr1234.vs.filtered-ff",
 	model_name = model_name,
 	agg_name = "all-ffpe-wes-samples"
 )
 
-# Filtered FFX dataset vs Filtered WES VCF, DP >= 10; MICR removed
+# Filtered FFX dataset vs Filtered WES VCF; DP>=20; MICR1234 removed
 evaluate_dataset(
 	dataset_id = "FFX",
 	ff_dataset_id = "WES",
-	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
-	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp-filtered_micr",
-	outdir_root = "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff",
-	model_name = model_name,
-	agg_name = "all-ffpe-wes-samples"
-)
-
-# Filtered FFX dataset vs Filtered WES VCF; DP>=20; MICR removed
-evaluate_dataset(
-	dataset_id = "FFX",
-	ff_dataset_id = "WES",
-	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
-	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp20-filtered_micr",
-	outdir_root = "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff",
+	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
+	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp20-filtered_micr1234",
+	outdir_root = "mutect2-matched-normal_pass-orientation-dp20-filtered_micr1234.vs.filtered-ff",
 	model_name = model_name,
 	agg_name = "all-ffpe-wes-samples"
 )
@@ -246,7 +250,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFG",
 # 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_filtermutectcalls_obmm_unfiltered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff",
 # 	model_name = model_name,
@@ -257,7 +261,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFG",
 # 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-filtered",
 # 	outdir_root = "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff",
 # 	model_name = model_name,
@@ -265,27 +269,27 @@ evaluate_dataset(
 # )
 
 
-# # FFG dataset vs Filtered WGS VCF, DP>=10
-# evaluate_dataset(
-# 	dataset_id = "FFG",
-# 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
-# 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp-filtered",
-# 	outdir_root = "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff",
-# 	model_name = model_name,
-# 	agg_name = "all-ffpe-wgs-samples"
-# )
+# FFG dataset vs Filtered WGS VCF, DP>=10
+evaluate_dataset(
+	dataset_id = "FFG",
+	ff_dataset_id = "WGS",
+	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp-filtered",
+	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wgs-samples"
+)
 
-# # FFG dataset vs Filtered WGS VCF, DP>=20
-# evaluate_dataset(
-# 	dataset_id = "FFG",
-# 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
-# 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp20-filtered",
-# 	outdir_root = "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff",
-# 	model_name = model_name,
-# 	agg_name = "all-ffpe-wgs-samples"
-# )
+# FFG dataset vs Filtered WGS VCF, DP>=20
+evaluate_dataset(
+	dataset_id = "FFG",
+	ff_dataset_id = "WGS",
+	ff_vcf_dir = "../vcf/mutect2-matched-normal_pass-orientation-dp20-filtered",
+	ffpe_snvf_dir = "../ffpe-snvf/mutect2-matched-normal_pass-orientation-dp20-filtered",
+	outdir_root = "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff",
+	model_name = model_name,
+	agg_name = "all-ffpe-wgs-samples"
+)
 
 
 # ################################# SEQC2 FFX Tumor Only ########################################
@@ -296,7 +300,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-tumor-only_pass-orientation-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-tumor-only_pass-orientation-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-tumor-only_pass-orientation-filtered",
 # 	outdir_root = "mutect2-tumor-only_pass-orientation-filtered.vs.filtered-ff",
 # 	model_name = model_name,
@@ -308,7 +312,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFX",
 # 	ff_dataset_id = "WES",
-# 	vcf_dir = "../vcf/mutect2-tumor-only_filtermutectcalls_obmm_unfiltered",
+# 	ff_vcf_dir = "../vcf/mutect2-tumor-only_filtermutectcalls_obmm_unfiltered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-tumor-only_pass-orientation-filtered",
 # 	outdir_root = "mutect2-tumor-only_pass-orientation-filtered.vs.unfiltered-ff",
 # 	model_name = model_name,
@@ -321,7 +325,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFG",
 # 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-tumor-only_filtermutectcalls_obmm_unfiltered",
+# 	ff_vcf_dir = "../vcf/mutect2-tumor-only_filtermutectcalls_obmm_unfiltered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-tumor-only_pass-orientation-filtered",
 # 	outdir_root = "mutect2-tumor-only_pass-orientation-filtered.vs.unfiltered-ff",
 # 	model_name = model_name,
@@ -332,7 +336,7 @@ evaluate_dataset(
 # evaluate_dataset(
 # 	dataset_id = "FFG",
 # 	ff_dataset_id = "WGS",
-# 	vcf_dir = "../vcf/mutect2-tumor-only_pass-orientation-filtered",
+# 	ff_vcf_dir = "../vcf/mutect2-tumor-only_pass-orientation-filtered",
 # 	ffpe_snvf_dir = "../ffpe-snvf/mutect2-tumor-only_pass-orientation-filtered",
 # 	outdir_root = "mutect2-tumor-only_pass-orientation-filtered.vs.filtered-ff",
 # 	model_name = model_name,
