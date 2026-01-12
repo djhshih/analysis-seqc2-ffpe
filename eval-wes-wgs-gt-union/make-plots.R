@@ -5,9 +5,9 @@ dset_dirs <- c(
 	# "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFX",
 	# "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFX",
 	# "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFX"
-	"mutect2-matched-normal_pass-orientation-dp-filtered_micr1234.vs.filtered-ff/FFX"
+	# "mutect2-matched-normal_pass-orientation-dp-filtered_micr1234.vs.filtered-ff/FFX"
 	# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG",
-	# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG",
+	"mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG"
 	# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFX",
 	# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFG",
 	# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFX",
