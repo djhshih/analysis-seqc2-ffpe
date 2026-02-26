@@ -40,10 +40,10 @@ def process_dataset(dataset: str, variant_set: str, vcf_suffix: str = ".vcf.gz")
 	# Find all VCF file paths
 	ffpe_paths = sorted(glob.glob(f"{repo_root}/vcf/{dataset}/{variant_set}/*/*{vcf_suffix}"))
 	
-	logging.info(f"Found {len(ffpe_paths)} FFPE VCF files")
+	logging.info(f"\tFound {len(ffpe_paths)} FFPE VCF files")
 
 	## Declare Fresh Frozen variant set name
-	wes_ff_set = variant_set.replace("orientation", "orientation-exome") if "exome" not in variant_set else variant_set
+	wes_ff_set = variant_set.replace("orientation", "orientation-exome") if (("exome" not in variant_set) and (dataset == "FFG")) else variant_set
 	wgs_ff_set = variant_set.replace("-exome", "")
 
 	## Glob Fresh Frozen VCF paths
@@ -56,7 +56,7 @@ def process_dataset(dataset: str, variant_set: str, vcf_suffix: str = ".vcf.gz")
 		# Extract FFPE sample name and case ID
 		ffpe_sample_name = path.split("/")[-2]
 
-		logging.info(f"{i}. Processing FFPE sample: {ffpe_sample_name}")
+		logging.info(f"\t{i}. Processing FFPE sample: {ffpe_sample_name}")
 
 		# Read and filter FFPE variants
 		ffpe = (
@@ -65,7 +65,7 @@ def process_dataset(dataset: str, variant_set: str, vcf_suffix: str = ".vcf.gz")
 			.select(["chrom", "pos", "ref", "alt"])
 		)
 
-		logging.info(f"\t{len(ff_paths)} matched FF samples found.")
+		logging.info(f"\t\t{len(ff_paths)} matched FF samples found.")
 
 		for j, ff_sample_path in enumerate(ff_paths, start=1):
 
@@ -73,7 +73,7 @@ def process_dataset(dataset: str, variant_set: str, vcf_suffix: str = ".vcf.gz")
 			ff_col_name = f"in_ff_{j}"
 
 			# Read frozen sample, filter variants
-			logging.info(f"\t\tComparing with frozen sample {j}: {ff_sample}")
+			logging.info(f"\t\t\tComparing with frozen sample {j}: {ff_sample}")
 
 			ff = (
 				read_variants(ff_sample_path)
@@ -97,18 +97,64 @@ def process_dataset(dataset: str, variant_set: str, vcf_suffix: str = ".vcf.gz")
 		os.makedirs(outdir, exist_ok=True)
 		outpath = f"{outdir}/{ffpe_sample_name}.ground-truth.tsv"
 		ffpe.write_csv(outpath, separator="\t")
-		logging.info(f"\tGround-truth written to: {outpath}")
+		logging.info(f"\t\tGround-truth written to: {outpath}\n")
 		
 
 ## Get Ground Truth
+
+### FFX
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation"
+)
+
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation-dp20"
+)
+
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation-dp20-blacklist"
+)
+
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation-exome"
+)
+
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20"
+)
+
+process_dataset(
+    dataset="FFX",
+    variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist"
+)
+
 process_dataset(
     dataset="FFX",
     variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal"
+)
+
+### FFG
+process_dataset(
+    dataset="FFG",
+    variant_set="mutect2-tn_filtered_pass-orientation"
+)
+
+process_dataset(
+    dataset="FFG",
+    variant_set="mutect2-tn_filtered_pass-orientation-dp20"
+)
+
+process_dataset(
+    dataset="FFG",
+    variant_set="mutect2-tn_filtered_pass-orientation-dp20-blacklist"
 )
 
 process_dataset(
     dataset="FFG",
     variant_set="mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
 )
-
-
