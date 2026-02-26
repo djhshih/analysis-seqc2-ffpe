@@ -3,11 +3,12 @@
 set -euo pipefail
 
 exome_regions="../data/seqc2-reference-genome/Exome_Target_bed/S07604624_Covered_human_all_v6_plus_UTR.liftover.to.hg38.bed"
+source_set_name="mutect2-tn_filtered_pass-orientation"
 filtered_set_name="mutect2-tn_filtered_pass-orientation-exome"
 
 i=1
 
-for vcf in {WES,FFX}/mutect2-tn_filtered_pass-orientation/*/*.vcf.gz; do
+for vcf in {WES,FFX}/$source_set_name/*/*.vcf.gz; do
 
     echo "$i. Filtering: $vcf"
 

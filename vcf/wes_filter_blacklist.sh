@@ -3,11 +3,12 @@
 set -euo pipefail
 
 blacklist_regions="../data/blacklists/master_blacklist.bed"
+source_set_name="mutect2-tn_filtered_pass-orientation-exome-dp20"
 filtered_set_name="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist"
 
 i=1
 
-for vcf in {WES,FFX}/mutect2-tn_filtered_pass-orientation-exome-dp20/*/*.vcf.gz; do
+for vcf in {WES,FFX}/$source_set_name/*/*.vcf.gz; do
 
     echo "$i. Filtering: $vcf"
 

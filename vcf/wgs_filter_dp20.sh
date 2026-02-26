@@ -3,11 +3,12 @@
 set -euo pipefail
 
 filter_expression='MIN(FMT/DP)>=20'
-filtered_set_name="mutect2-tn_filtered_pass-orientation-exome-dp20"
+source_set_name="mutect2-tn_filtered_pass-orientation"
+filtered_set_name="mutect2-tn_filtered_pass-orientation-dp20"
 
 i=1
 
-for vcf in {WES,FFX}/mutect2-tn_filtered_pass-orientation-exome/*/*.vcf.gz; do
+for vcf in {WGS,FFG}/$source_set_name/*/*.vcf.gz; do
 
     echo "$i. Filtering: $vcf"
 

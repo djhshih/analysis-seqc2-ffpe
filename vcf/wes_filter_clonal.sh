@@ -2,10 +2,9 @@
 
 set -euo pipefail
 
+clonal_variants_root="../stratify-clonal-subclonal"
 source_set_name="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist"
 filtered_set_name="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal"
-
-clonal_variants_root="../stratify-clonal-subclonal"
 
 i=1
 
