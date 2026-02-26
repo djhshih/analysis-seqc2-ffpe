@@ -1,0 +1,120 @@
+#!/usr/bin/env python
+import polars as pl
+import os
+import glob
+from tqdm import tqdm
+import sys
+
+# Local Dependencies
+repo_root = ".."
+sys.path.append(f"{repo_root}/common-ffpe-snvf/python")
+from common import read_variants
+
+## Functions
+def get_filtering_summary(
+    sample_name: str, 
+    model: str, 
+    orig_var_set: str, 
+    new_var_set: str, 
+    snvf: pl.DataFrame, 
+    target_vars: pl.DataFrame, 
+    filtered_snvf: pl.DataFrame
+) -> dict:
+
+    n_orig = snvf.height
+    n_target = target_vars.height
+    n_filtered = filtered_snvf.height
+
+    summary = {
+        "source_var_set" : orig_var_set,
+        "new_var_set" : new_var_set,
+        "sample_name" : sample_name,
+        "model" : model,
+        "n_var_source_snvf" : n_orig,
+        "n_var_target_vcf" : n_target,
+        "n_var_filtered_snvf": n_filtered,
+        "n_var_removed" : n_orig - n_filtered,
+        "pct_removed" : ((n_orig - n_filtered) / n_orig) * 100
+    }
+
+    return summary
+
+
+def get_ffpe_snvf_paths(dataset: str, variant_set: str) -> list:
+	"""
+	Returns the path for each FFPE SNVF model's
+	results for a specified variant set and dataset
+	"""
+
+	paths = sorted(
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.mobsnvf.snv") +
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.vafsnvf.snv") +
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.sobdetector.snv") +
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.ideafix-xgboost.tsv") +
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.gatk-obmm.tsv") +
+		glob.glob(f"{repo_root}/ffpe-snvf/{dataset}/{variant_set}/*/*/*.ffpolish.tsv")
+	)
+
+	return paths
+
+
+def filter_dataset(dataset: str, source_variant_set: str, new_variant_set: str, vcf_suffix: str = "vcf.gz") -> None:
+
+	print(f"Processing Dataset: {dataset} | Variant Set: {source_variant_set} | Output Set: {new_variant_set}")
+
+	vcf_dir = f"{repo_root}/vcf/{dataset}/{new_variant_set}"
+
+	ffpe_snvf_paths = get_ffpe_snvf_paths(dataset, source_variant_set)
+	filtering_summary = []
+
+	for path in tqdm(ffpe_snvf_paths):
+		model = path.split("/")[-3]
+		sample_name = path.split("/")[-2]
+		fname = os.path.basename(path)
+
+		snvf = pl.read_csv(path, separator="\t", infer_schema_length=1000)
+		
+		target_vars_path = f"{vcf_dir}/{sample_name}/{sample_name}.{vcf_suffix}"
+		target_vars = read_variants(target_vars_path)
+		
+		filtered_snvf = snvf.join(target_vars, on = ["chrom", "pos", "ref", "alt"], how="semi")
+
+		filtered_snvf_outdir = f"{repo_root}/ffpe-snvf/{dataset}/{new_variant_set}/{model}/{sample_name}"
+		os.makedirs(filtered_snvf_outdir, exist_ok=True)
+
+		sample_filtering_summary = get_filtering_summary(
+			sample_name,
+			model,
+			source_variant_set,
+			new_variant_set,
+			snvf,
+			target_vars,
+			filtered_snvf
+		)
+
+		filtering_summary.append(sample_filtering_summary)
+
+		filtered_snvf.write_csv(f"{filtered_snvf_outdir}/{fname}", separator="\t")
+
+	pl.DataFrame(filtering_summary).write_csv(f"{dataset}/{new_variant_set}/{os.path.basename(__file__).split(".")[0]}_filtering-summary.tsv", separator="\t")
+
+
+## SNVF DP<20 Filtering
+filter_dataset(
+	dataset = "FFX", 
+    source_variant_set = "mutect2-tn_filtered_pass-orientation",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
+)
+
+filter_dataset(
+	dataset = "FFX", 
+    source_variant_set = "mutect2-tn_filtered_pass-orientation-exome",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20"
+)
+
+filter_dataset(
+	dataset = "FFG", 
+    source_variant_set = "mutect2-tn_filtered_pass-orientation",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
+)
+
