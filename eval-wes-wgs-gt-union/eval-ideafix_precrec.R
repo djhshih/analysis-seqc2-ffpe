@@ -16,7 +16,7 @@ evaluate_sample_set <- function(
 	dataset,
 	variant_set,
 	result_set = NULL,
-	snvf_res_ext = "snv"
+	snvf_res_ext = "tsv"
 ) {
 
 	if(is.null(result_set)){
@@ -30,6 +30,7 @@ evaluate_sample_set <- function(
 	} else {
 		snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, model_name, sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	}
+	snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, unlist(strsplit(model_name, "-"))[1], sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	message(sprintf("	Found %d %s resuts...", length(snvf_paths), model_name))
 
 	for (i in seq_along(snvf_paths)){
@@ -96,7 +97,7 @@ evaluate_sample_set <- function(
 
 ########################################################
 
-model_name <- "mobsnvf"
+model_name <- "ideafix-xgboost"
 
 ######################### SEQC2 FFX ###############################
 

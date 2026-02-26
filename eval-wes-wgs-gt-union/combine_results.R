@@ -2,31 +2,28 @@
 library(io)
 
 ## Dataset specific
-eval_dirs <- c(
-		"mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		"mutect2-matched-normal_pass-orientation-dp-filtered_micr1234.vs.filtered-ff/FFX/roc-prc-auc/precrec"
-		# "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# # "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# # "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp20-filtered_micr.vs.filtered-ff/FFX/roc-prc-auc/precrec"
-		# "mutect2-matched-normal_pass-orientation-dp-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-dp20-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-tumor-only_pass-orientation-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-tumor-only_pass-orientation-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-tumor-only_pass-orientation-filtered.vs.unfiltered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-tumor-only_pass-orientation-filtered.vs.unfiltered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-filtered.vs.filtered-ff/FFG/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFX/roc-prc-auc/precrec",
-		# "mutect2-matched-normal_pass-orientation-filtered.vs.unfiltered-ff/FFG/roc-prc-auc/precrec"
-	)
+eval_dirs = c(
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome",
+	"FFX/mutect2-tn_filtered_pass-orientation-dp20-blacklist",
+	"FFX/mutect2-tn_filtered_pass-orientation-dp20",
+	"FFX/mutect2-tn_filtered_pass-orientation"
+	"FFG/mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal",
+	"FFG/mutect2-tn_filtered_pass-orientation-dp20-blacklist",
+	"FFG/mutect2-tn_filtered_pass-orientation-dp20",
+	"FFG/mutect2-tn_filtered_pass-orientation"
+)
+
+## List name of models that were evaluated. 
+models <- c("all-models", "mobsnvf", "vafsnvf", "sobdetector", "gatk-obmm", "microsec", "ideafix-xgboost", "ideafix-rf", "ideafix", "ffpolish")
 
 for (eval_dir in eval_dirs){
-	## List name of models that were evaluated. 
-	models <- c("all-models", "mobsnvf", "vafsnvf", "sobdetector", "gatk-obmm", "microsec", "ideafix-rf", "ideafix-xgboost", "ffpolish")
+
+	message(sprintf("Processing eval_dir: %s", eval_dir))
+
+	eval_dir <- file.path(eval_dir, "roc-prc-auc/precrec")
 
 	## Combine the AUC table for each sample and overall eval i.e all sample, liver samples, colon samples
 	message("Combining AUCs")
@@ -36,7 +33,7 @@ for (eval_dir in eval_dirs){
 	auc <- do.call(
 		rbind,
 		lapply(
-			auc_paths, 
+			auc_paths,
 			read.delim
 		)
 	)
@@ -50,14 +47,15 @@ for (eval_dir in eval_dirs){
 	roc_path <- list.files(eval_dir, pattern = "_roc_coordinates.tsv", recursive = TRUE, full.names = TRUE)
 	to_remove <- c(paste("", models, sep = "_"), '_roc_coordinates.tsv','_prc_coordinates.tsv')
 
+	# Remove model names and coordinate suffixes to get sample names
 	samples <- unique(sapply(
 		roc_path, 
 		function(i) {
-			s <- basename(i)
-			for (p in to_remove) {
-				s <- gsub(p, "", s, fixed = TRUE)
+			sample_name <- basename(i)
+			for (suffix in to_remove) {
+				sample_name <- gsub(suffix, "", sample_name, fixed = TRUE)
 			}
-			s
+			return(sample_name)
 		}, 
 		USE.NAMES = FALSE
 	))
@@ -99,3 +97,4 @@ for (eval_dir in eval_dirs){
 	message("Done.")
 
 }
+
