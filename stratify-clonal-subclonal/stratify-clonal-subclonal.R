@@ -54,10 +54,20 @@ filter_dataset <- function(dataset, variant_set, outdir_root=NULL, vcf_ext="vcf.
 ## WES FFPE Dataset
 filter_dataset(
 	dataset="FFX", 
+	variant_set="mutect2-tn_filtered_pass-orientation-dp20-blacklist", 
+)
+
+filter_dataset(
+	dataset="FFX", 
 	variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist", 
 )
 
 ## WES Frozen Dataset
+filter_dataset(
+	dataset="WES", 
+	variant_set="mutect2-tn_filtered_pass-orientation-dp20-blacklist", 
+)
+
 filter_dataset(
 	dataset="WES", 
 	variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist", 
