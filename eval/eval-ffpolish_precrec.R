@@ -96,7 +96,7 @@ evaluate_sample_set <- function(
 
 ########################################################
 
-model_name <- "gatk-obmm"
+model_name <- "ffpolish"
 
 ######################### SEQC2 FFX ###############################
 
@@ -154,7 +154,6 @@ evaluate_sample_set(
 	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal-micr1234"
 )
 
-
 ######################### SEQC2 FFG ###############################
 
 evaluate_sample_set(
@@ -180,4 +179,3 @@ evaluate_sample_set(
 	dataset = "FFG",
 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
 )
-
