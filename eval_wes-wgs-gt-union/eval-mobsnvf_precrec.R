@@ -6,7 +6,7 @@ source("../common-ffpe-snvf/R/eval.R")
 
 ## Setup
 repo_root <- ".."
-eval_dir = file.path(repo_root, "eval-wes-wgs-gt-union")
+eval_dir = file.path(repo_root, "eval_wes-wgs-gt-union")
 ffpe_snvf_dir = file.path(repo_root, "ffpe-snvf")
 
 #######################################################
@@ -42,7 +42,7 @@ evaluate_sample_set <- function(
 		message(sprintf("		SNVF path: %s", snvf_path))
 
 		## Read prepared ground truth
-		ground_truth_path <- file.path("..", "ground-truth", dataset, gsub("-micr1234", "", variant_set), sample_name, sprintf("%s.ground-truth.tsv", sample_name))
+		ground_truth_path <- file.path("..", "ground-truth", "wes-wgs-union", dataset, gsub("-micr1234", "", variant_set), sample_name, sprintf("%s.ground-truth.tsv", sample_name))
 		message(sprintf("		Reading Ground Truth from: %s", ground_truth_path))
 		ground_truth <- read.delim(ground_truth_path)
 		ground_truth$truth <- as.logical(ground_truth$truth)
@@ -96,7 +96,7 @@ evaluate_sample_set <- function(
 
 ########################################################
 
-model_name <- "vafsnvf"
+model_name <- "mobsnvf"
 
 ######################### SEQC2 FFX ###############################
 
@@ -139,32 +139,45 @@ evaluate_sample_set(
 evaluate_sample_set(
 	model_name = model_name,
 	dataset = "FFX",
+	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-micr1234"
+)
+
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFX",
 	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal"
 )
 
-######################### SEQC2 FFG ###############################
-
 evaluate_sample_set(
 	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation"
+	dataset = "FFX",
+	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal-micr1234"
 )
 
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
-)
 
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-)
+# ######################### SEQC2 FFG ###############################
 
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
-)
+# evaluate_sample_set(
+# 	model_name = model_name,
+# 	dataset = "FFG",
+# 	variant_set = "mutect2-tn_filtered_pass-orientation"
+# )
+
+# evaluate_sample_set(
+# 	model_name = model_name,
+# 	dataset = "FFG",
+# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
+# )
+
+# evaluate_sample_set(
+# 	model_name = model_name,
+# 	dataset = "FFG",
+# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
+# )
+
+# evaluate_sample_set(
+# 	model_name = model_name,
+# 	dataset = "FFG",
+# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
+# )
 
