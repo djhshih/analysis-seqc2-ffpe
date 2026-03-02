@@ -6,7 +6,7 @@ source("../common-ffpe-snvf/R/eval.R")
 
 ## Setup
 repo_root <- ".."
-eval_dir = file.path(repo_root, "eval_wes-wgs-gt-union")
+eval_dir = file.path(repo_root, "eval_seqc2-gt")
 ffpe_snvf_dir = file.path(repo_root, "ffpe-snvf")
 
 #######################################################
@@ -16,7 +16,7 @@ evaluate_sample_set <- function(
 	dataset,
 	variant_set,
 	result_set = NULL,
-	snvf_res_ext = "snv"
+	snvf_res_ext = "tsv"
 ) {
 
 	if(is.null(result_set)){
@@ -30,6 +30,7 @@ evaluate_sample_set <- function(
 	} else {
 		snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, model_name, sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	}
+	snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, unlist(strsplit(model_name, "-"))[1], sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	message(sprintf("	Found %d %s resuts...", length(snvf_paths), model_name))
 
 	for (i in seq_along(snvf_paths)){
@@ -42,7 +43,7 @@ evaluate_sample_set <- function(
 		message(sprintf("		SNVF path: %s", snvf_path))
 
 		## Read prepared ground truth
-		ground_truth_path <- file.path("..", "ground-truth", "wes-wgs-union", dataset, gsub("-micr1234", "", variant_set), sample_name, sprintf("%s.ground-truth.tsv", sample_name))
+		ground_truth_path <- file.path("..", "ground-truth", "from-seqc", dataset, gsub("-micr1234", "", variant_set), sample_name, sprintf("%s.ground-truth.tsv", sample_name))
 		message(sprintf("		Reading Ground Truth from: %s", ground_truth_path))
 		ground_truth <- read.delim(ground_truth_path)
 		ground_truth$truth <- as.logical(ground_truth$truth)
@@ -96,7 +97,7 @@ evaluate_sample_set <- function(
 
 ########################################################
 
-model_name <- "sobdetector"
+model_name <- "ideafix-xgboost"
 
 ######################### SEQC2 FFX ###############################
 
@@ -155,29 +156,29 @@ evaluate_sample_set(
 )
 
 
-# ######################### SEQC2 FFG ###############################
+######################### SEQC2 FFG ###############################
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
+)
 

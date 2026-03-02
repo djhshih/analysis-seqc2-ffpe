@@ -36,7 +36,7 @@ evaluate_sample_set <- function(
 
 		snvf_path <- snvf_paths[i]
 		sample_name <- basename(dirname(snvf_path))
-		outdir_root <- file.path(dataset, result_set)
+		outdir_root <- file.path(eval_dir, dataset, result_set)
 
 		message(sprintf("	%d. Sample: %s", i, sample_name))
 		message(sprintf("		SNVF path: %s", snvf_path))
