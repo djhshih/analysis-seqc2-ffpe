@@ -1,0 +1,6 @@
+*.bam
+*.bai
+*.bed*
+*.fasta*
+*.vcf*
+*.md5

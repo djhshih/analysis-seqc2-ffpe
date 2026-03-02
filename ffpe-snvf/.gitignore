@@ -1,0 +1,7 @@
+*.tsv
+*.snv
+*.json
+*.bed*
+*.bam*
+*.bai
+readcounts
