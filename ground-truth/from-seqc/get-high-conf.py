@@ -31,9 +31,9 @@ def read_variants(path:str, columns: list = ["#CHROM", "POS", "REF", "ALT"]) -> 
 # %% [markdown]
 # ## Main
 
-repo_root = ".."
+repo_root = "../.."
 snv_gt_path = f"{repo_root}/data/release/latest/high-confidence_sSNV_in_HC_regions_v1.2.1.vcf.gz"
-gt_outdir = f"{repo_root}/eval-seqc2-gt/ground-truth"
+gt_outdir = f"{repo_root}/ground-truth/from-seqc"
 os.makedirs(gt_outdir, exist_ok=True)
 
 snv_gt = read_variants(snv_gt_path, columns = ["#CHROM", "POS", "REF", "ALT", "FILTER"])
