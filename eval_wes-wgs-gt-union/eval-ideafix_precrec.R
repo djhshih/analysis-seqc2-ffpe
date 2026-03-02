@@ -156,29 +156,29 @@ evaluate_sample_set(
 )
 
 
-# ######################### SEQC2 FFG ###############################
+######################### SEQC2 FFG ###############################
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
+)
 
-# evaluate_sample_set(
-# 	model_name = model_name,
-# 	dataset = "FFG",
-# 	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
-# )
+evaluate_sample_set(
+	model_name = model_name,
+	dataset = "FFG",
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
+)
 
