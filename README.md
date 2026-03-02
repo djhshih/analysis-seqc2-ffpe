@@ -107,6 +107,7 @@ Only the **WGS**, **WES**, **FFG** and **FFX** datasets are relevant to our proj
 - **FFX:** Whole Exome Sequencing (WES) data sets for DNA extracted from HCC1395BL and HCC1395 cell lines and processed via Formalin-Fixed Paraffin-Embedded (FFPE) process with fixation time of 1, 2, 6, or 24 hours
     - **Preservation Method:** FFPE
     - **Cell Lines:** HCC1395BL (Normal), HCC1395 (Tumor)
+    - **Sample Size:** 17 (9 Tumor, 8 Normal) 
     - **Sequencing Centers:** 2 (GZ, IL)
     - **Sequencing method:** Whole Exome
     - **Source Data Types:** 
