@@ -122,5 +122,6 @@ prepare_dataset_inputs(
 
 prepare_dataset_inputs(
 	dataset = "FFG", 
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
+	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist",
+	ct_only = True
 )

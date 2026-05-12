@@ -3,12 +3,8 @@ import polars as pl
 import os
 import glob
 from tqdm import tqdm
-import sys
 
-# Local Dependencies
 repo_root = ".."
-sys.path.append(f"{repo_root}/common-ffpe-snvf/python")
-from common import read_variants
 
 ## Functions
 def get_filtering_summary(
@@ -72,8 +68,7 @@ def filter_dataset(
 
 	print(f"Processing Dataset: {dataset} | Variant Set: {source_variant_set} | MicroSEC variant Set: {msec_variant_set} | Output Set: {new_variant_set}")
 
-	vcf_dir = f"{repo_root}/vcf/{dataset}/{new_variant_set}"
-	msec_dir = f"{repo_root}/ffpe-snvf/{dataset}/{msec_variant_set}/microsec"
+	msec_dir = f"{repo_root}/microsec/{dataset}/{msec_variant_set}"
 
 	ffpe_snvf_paths = get_ffpe_snvf_paths(dataset, source_variant_set)
 	filtering_summary = []
@@ -118,18 +113,12 @@ def filter_dataset(
 	pl.DataFrame(filtering_summary).write_csv(f"{dataset}/{new_variant_set}/{os.path.basename(__file__).split(".")[0]}_filtering-summary.tsv", separator="\t")
 
 
-## SNVF MICR Filtering
+# ## SNVF MICR Filtering
 filter_dataset(
-	dataset = "FFX", 
-    source_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
-	msec_variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
-    new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-micr1234"
-)
-
-filter_dataset(
-	dataset = "FFX", 
-    source_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal",
-	msec_variant_set="mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
-    new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal-micr1234"
-)
+		dataset = "FFX",
+		source_variant_set = "mutect2-tn_filtered_pass-orientation-exome-blacklist",
+		msec_variant_set = "mutect2-tn_filtered_pass-orientation-exome",
+		new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-blacklist-micr1234",
+		mesc_filter_col = "msec_filter_1234"
+	)
 

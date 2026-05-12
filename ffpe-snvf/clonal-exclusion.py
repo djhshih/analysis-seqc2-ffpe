@@ -99,27 +99,21 @@ def filter_dataset(dataset: str, source_variant_set: str, new_variant_set: str, 
 	pl.DataFrame(filtering_summary).write_csv(f"{dataset}/{new_variant_set}/{os.path.basename(__file__).split(".")[0]}_filtering-summary.tsv", separator="\t")
 
 
-## SNVF Blacklist Filtering
-# filter_dataset(
-# 	dataset = "FFX", 
-#     source_variant_set = "mutect2-tn_filtered_pass-orientation-dp20",
-#     new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-# )
+## SNVF Subclonal Filtering
+filter_dataset(
+	dataset = "FFX", 
+    source_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-subclonal"
+)
 
 filter_dataset(
 	dataset = "FFX", 
-    source_variant_set = "mutect2-tn_filtered_pass-orientation-exome",
-    new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-blacklist"
+    source_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-subclonal"
 )
-
-# filter_dataset(
-# 	dataset = "FFG", 
-#     source_variant_set = "mutect2-tn_filtered_pass-orientation-dp20",
-#     new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-# )
 
 filter_dataset(
 	dataset = "FFG", 
-    source_variant_set = "mutect2-tn_filtered_pass-orientation",
-    new_variant_set = "mutect2-tn_filtered_pass-orientation-blacklist"
+    source_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist",
+    new_variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-subclonal"
 )
