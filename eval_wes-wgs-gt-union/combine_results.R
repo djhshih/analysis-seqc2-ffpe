@@ -3,18 +3,11 @@ library(io)
 
 ## Dataset specific
 eval_dirs = c(
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal-micr1234",
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-micr1234",
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal",
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist",
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-dp20",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist-micr1234",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist",
 	"FFX/mutect2-tn_filtered_pass-orientation-exome",
-	"FFX/mutect2-tn_filtered_pass-orientation-dp20-blacklist",
-	"FFX/mutect2-tn_filtered_pass-orientation-dp20",
 	"FFX/mutect2-tn_filtered_pass-orientation",
-	"FFG/mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal",
-	"FFG/mutect2-tn_filtered_pass-orientation-dp20-blacklist",
-	"FFG/mutect2-tn_filtered_pass-orientation-dp20",
+	"FFG/mutect2-tn_filtered_pass-orientation-blacklist",
 	"FFG/mutect2-tn_filtered_pass-orientation"
 )
 

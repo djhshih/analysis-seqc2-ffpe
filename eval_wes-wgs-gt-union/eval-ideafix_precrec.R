@@ -30,7 +30,6 @@ evaluate_sample_set <- function(
 	} else {
 		snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, model_name, sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	}
-	snvf_paths <- Sys.glob(file.path(ffpe_snvf_dir, dataset, variant_set, unlist(strsplit(model_name, "-"))[1], sprintf("*/*.%s.%s", model_name, snvf_res_ext)))
 	message(sprintf("	Found %d %s resuts...", length(snvf_paths), model_name))
 
 	for (i in seq_along(snvf_paths)){
@@ -83,7 +82,7 @@ evaluate_sample_set <- function(
 	all_score_truth <- bind_rows(
 		lapply(eval_data_paths, function(path) {
 			d <- read.delim(path)
-			d$sample_name <- sample_name
+			d$sample_name <- gsub(sprintf("_*%s-scores_truths.tsv", model_name), "", basename(path))
 			return(d)
 		})
 	)
@@ -110,49 +109,19 @@ evaluate_sample_set(
 evaluate_sample_set(
 	model_name = model_name,
 	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
-)
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
-)
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFX",
 	variant_set = "mutect2-tn_filtered_pass-orientation-exome"
 )
 
 evaluate_sample_set(
 	model_name = model_name,
 	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20"
+	variant_set = "mutect2-tn_filtered_pass-orientation-exome-blacklist"
 )
 
 evaluate_sample_set(
 	model_name = model_name,
 	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist"
-)
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-micr1234"
-)
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal"
-)
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFX",
-	variant_set = "mutect2-tn_filtered_pass-orientation-exome-dp20-blacklist-clonal-micr1234"
+	variant_set = "mutect2-tn_filtered_pass-orientation-exome-blacklist-micr1234"
 )
 
 
@@ -164,21 +133,9 @@ evaluate_sample_set(
 	variant_set = "mutect2-tn_filtered_pass-orientation"
 )
 
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20"
-)
 
 evaluate_sample_set(
 	model_name = model_name,
 	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist"
+	variant_set = "mutect2-tn_filtered_pass-orientation-blacklist"
 )
-
-evaluate_sample_set(
-	model_name = model_name,
-	dataset = "FFG",
-	variant_set = "mutect2-tn_filtered_pass-orientation-dp20-blacklist-clonal"
-)
-

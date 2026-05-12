@@ -4,12 +4,12 @@
 source("../common-ffpe-snvf/R/plot.R")
 
 dset_dirs <- c(
-	"FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist-micr1234"
-	# "FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist",
-	# "FFX/mutect2-tn_filtered_pass-orientation-exome",
-	# "FFX/mutect2-tn_filtered_pass-orientation",
-	# "FFG/mutect2-tn_filtered_pass-orientation-blacklist",
-	# "FFG/mutect2-tn_filtered_pass-orientation"
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist-micr1234",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome-blacklist",
+	"FFX/mutect2-tn_filtered_pass-orientation-exome",
+	"FFX/mutect2-tn_filtered_pass-orientation",
+	"FFG/mutect2-tn_filtered_pass-orientation-blacklist",
+	"FFG/mutect2-tn_filtered_pass-orientation"
 )
 
 # dset_author <- c(
