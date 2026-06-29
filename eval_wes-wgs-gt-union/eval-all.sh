@@ -2,6 +2,7 @@
 
 set -euox pipefail
 
+Rscript eval-ffperase_precrec.R
 Rscript eval-ffpolish_precrec.R
 Rscript eval-gatk-obmm_precrec.R
 Rscript eval-ideafix_precrec.R
